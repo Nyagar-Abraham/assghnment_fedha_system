@@ -5,25 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1fa5e8b3-6190-427e-9503-2f5d0f336365" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Fedha_System.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/controller/DividendController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/controller/FixedDepositController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/controller/LoanController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/controller/MemberController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/DatabaseConnection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/Dividend.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/FixedDeposit.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/Loan.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/Member.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/DividendDistributionForm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/FixedDepositForm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/LoanApplicationForm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/MemberRegistrationForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fedha_System.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Fedha_System.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/MemberController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Member.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/LoanApplicationForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/LoanApplicationForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/MemberRegistrationForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/MemberRegistrationForm.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,9 +28,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2nki9YZu4G7vACQZFeLEGLs6gfY" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -51,15 +39,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "onboarding.tips.debug.path": "/home/nyagarabraham/IdeaProjects/Fedha_System/src/Main.java"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/usr/share/java/mysql-connector-j.jar&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/home/nyagarabraham/IdeaProjects/Fedha_System/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -84,6 +80,16 @@
       <updated>1729523326769</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.sql.SQLException" package="java.sql" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Fedha_System$Main.ic" NAME="Main Coverage Results" MODIFIED="1729523632099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />

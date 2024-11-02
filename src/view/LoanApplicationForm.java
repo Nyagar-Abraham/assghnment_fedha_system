@@ -1,7 +1,9 @@
 package view;
 
 import controller.LoanController;
+import controller.MemberController;
 import model.Loan;
+import model.Member;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +17,8 @@ public class LoanApplicationForm extends JFrame {
     private JButton btnApply;
     private JPanel panel;
     private JLabel label;
+    private JButton btnDelete;
+    Member member;
 
 
     private final String[] loanCategories = {
@@ -28,6 +32,7 @@ public class LoanApplicationForm extends JFrame {
         setTitle("Loan Application");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setBackground(Color.BLACK);
         setLayout(null);
 
         txtMemberId = new JTextField();
@@ -35,7 +40,23 @@ public class LoanApplicationForm extends JFrame {
         txtAmount = new JTextField();
         btnApply = new JButton("Apply for Loan");
 
-        label = new JLabel("Apply For Loan");
+        // Set button color
+        btnApply.setBackground(Color.GREEN);
+        btnApply.setForeground(Color.BLACK);
+
+        //get member details
+
+        int memberId = MemberController.getLastMemberId();
+        if(memberId != -1){
+            member = MemberController.getMemberData(memberId);
+        }else{
+            dispose();
+            new MemberRegistrationForm();
+        }
+
+
+
+        label = new JLabel("\uD83D\uDC4B Welcome " +member.getFirstName() );
         label.setBounds(150, 50, 300, 30);
         label.setForeground(Color.green);
         label.setFont(new Font("Arial", Font.ITALIC, 22));
@@ -44,17 +65,51 @@ public class LoanApplicationForm extends JFrame {
         panel = new JPanel();
         panel.setLayout(new GridLayout(3, 2, 10, 10));
         panel.setBounds(50, 100, 350, 130);
+        panel.setBackground(Color.BLACK);
 
-        panel.add(new JLabel("Member ID:"));
+        JLabel memberIdLabel = new JLabel("Member ID:");
+        memberIdLabel.setForeground(Color.WHITE);
+        JLabel LoanTypeLabel = new JLabel("Loan Type:");
+        LoanTypeLabel.setForeground(Color.WHITE);
+        JLabel amountLabel = new JLabel("Amount :");
+        amountLabel.setForeground(Color.WHITE);
+
+        // Initialize the delete button
+        btnDelete = new JButton("Delete User");
+        btnDelete.setBounds(320, 240, 150, 30);
+        btnDelete.setBackground(Color.RED);
+        btnDelete.setForeground(Color.WHITE);
+
+        panel.add(memberIdLabel);
         panel.add(txtMemberId);
-        panel.add(new JLabel("Loan Type:"));
+        panel.add(LoanTypeLabel);
         panel.add(cmbLoanType);
-        panel.add(new JLabel("Amount:"));
+        panel.add(amountLabel);
         panel.add(txtAmount);
 
         btnApply.setBounds(150, 240, 150, 30);
         add(panel);
+        add(btnDelete);
         add(btnApply);
+
+        // Action listener for Delete button
+        btnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+//                    int memberId = Integer.parseInt(txtMemberId.getText());
+
+                    int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        MemberController.deleteAllMembers();
+                        JOptionPane.showMessageDialog(null, "User deleted successfully!");
+                        clearFields();
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid Member ID", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         btnApply.addActionListener(new ActionListener() {
             @Override
