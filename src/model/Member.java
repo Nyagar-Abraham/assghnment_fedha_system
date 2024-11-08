@@ -1,7 +1,7 @@
 package model;
 
 public class Member {
-//    private int id;
+    private int id;
     private String firstName;
     private String lastName;
     private int age;
@@ -10,8 +10,8 @@ public class Member {
     private double registrationFee;
     private double totalShares;
 
-    public Member(int age, String firstName, String lastName,  String email, String password,double registrationFee, double totalShares) {
-//        this.id = id;
+    public Member(int id,int age, String firstName, String lastName,  String email, String password,double registrationFee, double totalShares) {
+        this.id = id;
         this.age = age;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -21,9 +21,9 @@ public class Member {
         this.totalShares = totalShares;
     }
 
-//    public int getId() {
-//        return id;
-//    }
+    public int getId() {
+        return id;
+    }
 
     public int getAge() {
         return age;

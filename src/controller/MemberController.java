@@ -67,7 +67,7 @@ public class MemberController {
 
                 // Instantiate Member only if credentials match
                 if (dbEmail.equals(email) && dbPassword.equals(passwordInput)) {
-                    member = new Member(age, firstName, lastName, dbEmail, dbPassword, registrationFee, totalShares);
+                    member = new Member(id ,age, firstName, lastName, dbEmail, dbPassword, registrationFee, totalShares);
                 }
             } else {
                 System.out.println("Login failed: Invalid email or password.");
@@ -97,7 +97,7 @@ public class MemberController {
                 double registrationFee = rs.getDouble("registration_fee");
                 double totalShares = rs.getDouble("total_shares");
 
-                member = new Member(age, firstName, lastName, email, password, registrationFee, totalShares);
+                member = new Member(id ,age, firstName, lastName, email, password, registrationFee, totalShares);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class MemberController {
                 double registrationFee = rs.getDouble("registration_fee");
                 double totalShares = rs.getDouble("total_shares");
 
-                Member member = new Member(age, firstName, lastName, email, password, registrationFee, totalShares);
+                Member member = new Member(id ,age, firstName, lastName, email, password, registrationFee, totalShares);
                 members.add(member);
             }
         } catch (SQLException e) {

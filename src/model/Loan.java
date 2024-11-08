@@ -8,16 +8,31 @@ public class Loan {
     private double interestRate;
     private int repaymentPeriod; // in months
     private double monthlyRepayment;
-    private int[] guarantorID;
+    private int guarantorID;
+    private double guaranteedAmount;
 
 
-    public Loan(int id, int memberId, String loanType, double amount, double interestRate, int repaymentPeriod) {
+    public Loan(int id, int memberId, String loanType, double amount, double interestRate, int repaymentPeriod,int guarantorID,double guaranteedAmount) {
         this.id = id;
         this.memberId = memberId;
         this.loanType = loanType;
         this.amount = amount;
         this.interestRate = interestRate;
         this.repaymentPeriod = repaymentPeriod;
+        this.guarantorID = guarantorID;
+        this.guaranteedAmount = guaranteedAmount;
+        this.monthlyRepayment = calculateMonthlyRepayment();
+    }
+
+    public Loan( int memberId, String loanType, double amount, double interestRate, int repaymentPeriod,int guarantorID,double guaranteedAmount) {
+
+        this.memberId = memberId;
+        this.loanType = loanType;
+        this.amount = amount;
+        this.interestRate = interestRate;
+        this.repaymentPeriod = repaymentPeriod;
+        this.guarantorID = guarantorID;
+        this.guaranteedAmount = guaranteedAmount;
         this.monthlyRepayment = calculateMonthlyRepayment();
     }
 
@@ -25,14 +40,22 @@ public class Loan {
         return (amount * (1 + (interestRate / 100 * repaymentPeriod))) / repaymentPeriod;
     }
 
-    public int[] getGuarantorIDs() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getGuarantorID() {
         return guarantorID;
     }
 
-    public void setGuarantorID(int[] guarantorID) {
-        this.guarantorID = guarantorID;
-    }
+//    public void setGuarantorID(int guarantorID) {
+//        this.guarantorID = guarantorID;
+//    }
 
+
+    public double getGuaranteedAmount() {
+        return guaranteedAmount;
+    }
 
     public int getId() {
         return id;

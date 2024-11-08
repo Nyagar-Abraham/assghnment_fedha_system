@@ -100,7 +100,9 @@ public class MemberRegistrationForm extends JFrame {
                         return;
                     }
 
-                    Member member = new Member(age, firstName, lastName, email, pass, registrationFee, totalShares);
+                    int id = MemberController.getLastMemberId();
+
+                    Member member = new Member(id,age, firstName, lastName, email, pass, registrationFee, totalShares);
                     Member registerMember =  MemberController.registerMember(member);
                     JOptionPane.showMessageDialog(null, "Member registered successfully!");
                     clearFields();

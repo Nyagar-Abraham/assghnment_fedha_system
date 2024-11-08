@@ -15,22 +15,25 @@ import java.util.ArrayList;
 
 public class LoanApplicationForm extends JFrame {
     private Member member;
-    private JTextField txtMemberId;
+    private JTextField txtGuarateedAmount;
     private JComboBox<String> cmbLoanType;
     private JComboBox<String> cmbGuarantors;
     private JTextField txtAmount;
     private JButton btnApply;
+    private JButton backBtn;
     private JPanel panel;
     private JLabel label;
     private JButton btnDelete;
+    private ArrayList<String[]> guarantorDetails = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
+    ComboBoxModel<String> model;
 
-    //  GET GUARANTORS
-    ArrayList<Member> guarantors = (ArrayList<Member>)  MemberController.getAllUsers();
-
-   for (Member guarantor : guarantors) {
-        // Perform operations with each guarantor
-        System.out.println("Guarantor Name: " + guarantor.getFirstName() + " " + guarantor.getLastName());
-    }
+    //loan selection
+    private String selectedGuarantorName;
+    private int selectedGuarantorId;
+    private double interestRate;
+    private int repaymentPeriod;
+    private double maxLoanAmount;
 
 
 
@@ -44,64 +47,104 @@ public class LoanApplicationForm extends JFrame {
     public LoanApplicationForm(Member member) {
         this.member = member;
         setTitle("Loan Application");
-        setSize(500, 400);
+        setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.BLACK);
         setLayout(null);
 
-        txtMemberId = new JTextField();
-        cmbLoanType = new JComboBox<>(loanCategories);  // Replaced with JComboBox
+        // GET GUARANTORS
+        ArrayList<Member> guarantors = MemberController.getAllUsers();
+
+        // Iterate through each guarantor
+        for (Member guarantor : guarantors) {
+            if (guarantor.getId() == member.getId()) {
+                continue;
+            }
+
+            // Create an array for each guarantor with their id and first name
+            String[] details = new String[2];
+            details[0] = String.valueOf(guarantor.getId());
+            details[1] = guarantor.getFirstName();
+
+            // Add the array to the list
+            guarantorDetails.add(details);
+            names.add(guarantor.getFirstName());
+        }
+
+        // Combo box setup
+        txtGuarateedAmount = new JTextField();
+        cmbLoanType = new JComboBox<>(loanCategories);
+        model = new DefaultComboBoxModel<>(names.toArray(new String[0]));
+        cmbGuarantors = new JComboBox<>(model);
         txtAmount = new JTextField();
         btnApply = new JButton("Apply for Loan");
+        backBtn = new JButton("back");
 
         // Set button color
         btnApply.setBackground(Color.GREEN);
         btnApply.setForeground(Color.BLACK);
 
+        // Set button color
+        backBtn.setBackground(Color.lightGray);
+        backBtn.setForeground(Color.BLACK);
 
-        label = new JLabel("\uD83D\uDC4B Welcome " +member.getFirstName() );
-        label.setBounds(150, 50, 300, 30);
+        label = new JLabel("\uD83D\uDC4B Welcome " + member.getFirstName());
+        label.setBounds(300, 50, 300, 30);
         label.setForeground(Color.green);
-        label.setFont(new Font("Arial", Font.ITALIC, 22));
+        label.setFont(new Font("Arial", Font.ITALIC, 26));
         add(label);
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2, 10, 10));
-        panel.setBounds(50, 100, 350, 130);
+        panel.setLayout(new GridLayout(4, 2, 10, 10));
+        panel.setBounds(200, 100, 400, 300);
         panel.setBackground(Color.BLACK);
 
-        JLabel memberIdLabel = new JLabel("Member ID:");
-        memberIdLabel.setForeground(Color.WHITE);
+        JLabel lblGuanranteedAmount = new JLabel("Guaranteed Amount:");
+        lblGuanranteedAmount.setForeground(Color.WHITE);
         JLabel LoanTypeLabel = new JLabel("Loan Type:");
         LoanTypeLabel.setForeground(Color.WHITE);
+        JLabel guarantorsLabel = new JLabel("Select Guarantor :");
+        guarantorsLabel.setForeground(Color.WHITE);
         JLabel amountLabel = new JLabel("Amount :");
         amountLabel.setForeground(Color.WHITE);
 
-        // Initialize the delete button
         btnDelete = new JButton("Delete User");
-        btnDelete.setBounds(320, 240, 150, 30);
+        btnDelete.setBounds(500, 650, 150, 30);
         btnDelete.setBackground(Color.RED);
         btnDelete.setForeground(Color.WHITE);
 
-        panel.add(memberIdLabel);
-        panel.add(txtMemberId);
-        panel.add(LoanTypeLabel);
-        panel.add(cmbLoanType);
         panel.add(amountLabel);
         panel.add(txtAmount);
+        panel.add(LoanTypeLabel);
+        panel.add(cmbLoanType);
+        panel.add(guarantorsLabel);
+        panel.add(cmbGuarantors);
 
-        btnApply.setBounds(150, 240, 150, 30);
+
+        btnApply.setBounds(300, 650, 150, 30);
+        backBtn.setBounds(20,20,80 ,30);
+        add(backBtn);
         add(panel);
         add(btnDelete);
         add(btnApply);
+
+
+        //back action
+        backBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new MemberRegistrationForm();
+                JOptionPane.showMessageDialog(null, "Please LogIn again", "Alert", JOptionPane.PLAIN_MESSAGE);
+
+            }
+        });
 
         // Action listener for Delete button
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-//                    int memberId = Integer.parseInt(txtMemberId.getText());
-
                     int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         MemberController.deleteAllMembers();
@@ -114,43 +157,67 @@ public class LoanApplicationForm extends JFrame {
             }
         });
 
+        // Add event listener for loan type combo box
+        cmbLoanType.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String loanType = (String) cmbLoanType.getSelectedItem();
+                switch (loanType) {
+                    case "Emergency Loan":
+                        interestRate = 0.3;
+                        repaymentPeriod = 12;
+                        maxLoanAmount = member.getRegistrationFee() + member.getTotalShares();
+                        break;
+                    case "Short Loan (2 years)":
+                        interestRate = 0.6;
+                        repaymentPeriod = 24;
+                        maxLoanAmount = 2 * (member.getRegistrationFee() + member.getTotalShares());
+                        break;
+                    case "Short Loan (3 years)":
+                        interestRate = 1.0;
+                        repaymentPeriod = 36;
+                        maxLoanAmount = 3 * (member.getRegistrationFee() + member.getTotalShares());
+                        break;
+                    case "Short Loan (4 years)":
+                        interestRate = 1.4;
+                        repaymentPeriod = 48;
+                        maxLoanAmount = 4 * (member.getRegistrationFee() + member.getTotalShares());
+                        break;
+                    default:
+                        interestRate = 0;
+                        repaymentPeriod = 0;
+                        maxLoanAmount = 0;
+                        break;
+                }
+            }
+        });
+
+        // Add event listener for guarantor combo box
+        cmbGuarantors.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = cmbGuarantors.getSelectedIndex();
+                if (selectedIndex >= 0 && selectedIndex < guarantorDetails.size()) {
+                    String[] selectedGuarantor = guarantorDetails.get(selectedIndex);
+                    selectedGuarantorName = selectedGuarantor[1]; // Store the name of the selected guarantor
+                    selectedGuarantorId = Integer.parseInt(selectedGuarantor[0]);
+                    panel.add(lblGuanranteedAmount);
+                    panel.add(txtGuarateedAmount);
+                }
+            }
+        });
+
+        // Apply button action
         btnApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (validateFields()) {
-                    int memberId = Integer.parseInt(txtMemberId.getText());
+                    double guaranteedAmount = Double.parseDouble(txtGuarateedAmount.getText());
                     String loanType = (String) cmbLoanType.getSelectedItem();
                     double amount = Double.parseDouble(txtAmount.getText());
 
-                    // Set interest rate and repayment period based on the selected loan type
-                    double interestRate;
-                    int repaymentPeriod;
-
-                    switch (loanType) {
-                        case "Emergency Loan":
-                            interestRate = 0.3;
-                            repaymentPeriod = 12;
-                            break;
-                        case "Short Loan (2 years)":
-                            interestRate = 0.6;
-                            repaymentPeriod = 24;
-                            break;
-                        case "Short Loan (3 years)":
-                            interestRate = 1.0;
-                            repaymentPeriod = 36;
-                            break;
-                        case "Short Loan (4 years)":
-                            interestRate = 1.4;
-                            repaymentPeriod = 48;
-                            break;
-                        default:
-                            interestRate = 0;
-                            repaymentPeriod = 0;
-                            break;
-                    }
-
-                    Loan loan = new Loan(0, memberId, loanType, amount, interestRate, repaymentPeriod);
-//                    LoanController.applyForLoan(loan);
+                    Loan loan = new Loan( member.getId(), loanType, amount, interestRate, repaymentPeriod, selectedGuarantorId,guaranteedAmount);
+                     Loan appliedLoan = LoanController.applyForLoan(loan);
                     JOptionPane.showMessageDialog(null, "Loan application submitted successfully!");
                     clearFields();
                 }
@@ -160,16 +227,17 @@ public class LoanApplicationForm extends JFrame {
         setVisible(true);
     }
 
+
     // Validation method for input fields
     private boolean validateFields() {
 
-        if (txtMemberId.getText().isEmpty()) {
+        if (txtGuarateedAmount.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Member ID cannot be empty", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         try {
-            Integer.parseInt(txtMemberId.getText());
+            Integer.parseInt(txtGuarateedAmount.getText());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Member ID must be a valid number", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -195,8 +263,9 @@ public class LoanApplicationForm extends JFrame {
     }
 
     private void clearFields() {
-        txtMemberId.setText("");
-        cmbLoanType.setSelectedIndex(0);  // Reset combo box
+        txtGuarateedAmount.setText("");
+        cmbLoanType.setSelectedIndex(0);
+        cmbGuarantors.setSelectedIndex(0);
         txtAmount.setText("");
     }
 }
