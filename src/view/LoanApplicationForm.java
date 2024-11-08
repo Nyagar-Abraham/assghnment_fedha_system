@@ -4,21 +4,34 @@ import controller.LoanController;
 import controller.MemberController;
 import model.Loan;
 import model.Member;
+import org.w3c.dom.ls.LSOutput;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 
 public class LoanApplicationForm extends JFrame {
+    private Member member;
     private JTextField txtMemberId;
     private JComboBox<String> cmbLoanType;
+    private JComboBox<String> cmbGuarantors;
     private JTextField txtAmount;
     private JButton btnApply;
     private JPanel panel;
     private JLabel label;
     private JButton btnDelete;
-    Member member;
+
+    //  GET GUARANTORS
+    ArrayList<Member> guarantors = (ArrayList<Member>)  MemberController.getAllUsers();
+
+   for (Member guarantor : guarantors) {
+        // Perform operations with each guarantor
+        System.out.println("Guarantor Name: " + guarantor.getFirstName() + " " + guarantor.getLastName());
+    }
+
 
 
     private final String[] loanCategories = {
@@ -28,7 +41,8 @@ public class LoanApplicationForm extends JFrame {
             "Short Loan (4 years)"
     };
 
-    public LoanApplicationForm() {
+    public LoanApplicationForm(Member member) {
+        this.member = member;
         setTitle("Loan Application");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,17 +57,6 @@ public class LoanApplicationForm extends JFrame {
         // Set button color
         btnApply.setBackground(Color.GREEN);
         btnApply.setForeground(Color.BLACK);
-
-        //get member details
-
-        int memberId = MemberController.getLastMemberId();
-        if(memberId != -1){
-            member = MemberController.getMemberData(memberId);
-        }else{
-            dispose();
-            new MemberRegistrationForm();
-        }
-
 
 
         label = new JLabel("\uD83D\uDC4B Welcome " +member.getFirstName() );
