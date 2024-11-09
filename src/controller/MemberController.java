@@ -132,22 +132,31 @@ public class MemberController {
         return members;
     }
 
-    //DELETE ALL MEMBERS
-    public static void deleteAllMembers() {
-        String query = "DELETE FROM members";
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            assert conn != null;
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
 
-                int rowsDeleted = stmt.executeUpdate();
-                System.out.println(rowsDeleted + " members deleted from the database.");
+    // Method to log out (delete) a member by ID
+    public static boolean logoutMemberById(int memberId) {
+        // SQL query to delete the member
+        String deleteQuery = "DELETE FROM members WHERE member_id = ?";
 
-            }
+        try (Connection conn = DatabaseConnection.getConnection();  // Assuming you have a DatabaseConnection class
+             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+
+            // Set the member ID parameter
+            stmt.setInt(1, memberId);
+
+            // Execute the query
+            int rowsAffected = stmt.executeUpdate();
+
+            // If one row was affected, the member was deleted
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error deleting all members: " + e.getMessage());
+            e.printStackTrace();  // Log the error
+            return false;
         }
     }
+
 
     //GET LAST MEMBER ID
     public static int getLastMemberId() {

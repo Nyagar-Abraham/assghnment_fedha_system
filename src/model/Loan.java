@@ -8,8 +8,12 @@ public class Loan {
     private double interestRate;
     private int repaymentPeriod; // in months
     private double monthlyRepayment;
+
+
+    private String guarantorName;
     private int guarantorID;
     private double guaranteedAmount;
+
 
 
     public Loan(int id, int memberId, String loanType, double amount, double interestRate, int repaymentPeriod,int guarantorID,double guaranteedAmount) {
@@ -24,7 +28,18 @@ public class Loan {
         this.monthlyRepayment = calculateMonthlyRepayment();
     }
 
-    public Loan( int memberId, String loanType, double amount, double interestRate, int repaymentPeriod,int guarantorID,double guaranteedAmount) {
+    public Loan(int id, int memberId, String loanType, double amount, double interestRate, int repaymentPeriod,double monthlyRepayment) {
+        this.id = id;
+        this.memberId = memberId;
+        this.loanType = loanType;
+        this.amount = amount;
+        this.interestRate = interestRate;
+        this.repaymentPeriod = repaymentPeriod;
+        this.monthlyRepayment = monthlyRepayment;
+    }
+
+
+    public Loan(int memberId, String loanType, double amount, double interestRate, int repaymentPeriod, int guarantorID, double guaranteedAmount) {
 
         this.memberId = memberId;
         this.loanType = loanType;
@@ -39,6 +54,24 @@ public class Loan {
     private double calculateMonthlyRepayment() {
         return (amount * (1 + (interestRate / 100 * repaymentPeriod))) / repaymentPeriod;
     }
+
+    public void setGuaranteedAmount(double guaranteedAmount) {
+        this.guaranteedAmount = guaranteedAmount;
+    }
+
+    public void setGuarantorID(int guarantorID) {
+        this.guarantorID = guarantorID;
+    }
+
+
+    public String getGuarantorName() {
+        return guarantorName;
+    }
+
+    public void setGuarantorName(String guarantorName) {
+        this.guarantorName = guarantorName;
+    }
+
 
     public void setId(int id) {
         this.id = id;

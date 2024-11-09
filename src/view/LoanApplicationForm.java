@@ -11,9 +11,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class LoanApplicationForm extends JFrame {
+    private static boolean isLoans = false;
     private Member member;
     private JTextField txtGuarateedAmount;
     private JComboBox<String> cmbLoanType;
@@ -23,10 +25,11 @@ public class LoanApplicationForm extends JFrame {
     private JButton backBtn;
     private JPanel panel;
     private JLabel label;
-    private JButton btnDelete;
+    private JButton btnLogout;
     private ArrayList<String[]> guarantorDetails = new ArrayList<>();
     private ArrayList<String> names = new ArrayList<>();
     ComboBoxModel<String> model;
+    private LoanDisplay loanDisplay;
 
     //loan selection
     private String selectedGuarantorName;
@@ -46,6 +49,7 @@ public class LoanApplicationForm extends JFrame {
 
     public LoanApplicationForm(Member member) {
         this.member = member;
+        isLoans = !LoanController.getUserLoansWithGuarantor(member.getId()).isEmpty();
         setTitle("Loan Application");
         setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,6 +83,10 @@ public class LoanApplicationForm extends JFrame {
         txtAmount = new JTextField();
         btnApply = new JButton("Apply for Loan");
         backBtn = new JButton("back");
+        btnLogout = new JButton("log out");
+        btnLogout.setBounds(600, 20, 120, 30);
+        btnLogout.setBackground(Color.RED);
+        btnLogout.setForeground(Color.WHITE);
 
         // Set button color
         btnApply.setBackground(Color.GREEN);
@@ -96,7 +104,7 @@ public class LoanApplicationForm extends JFrame {
 
         panel = new JPanel();
         panel.setLayout(new GridLayout(4, 2, 10, 10));
-        panel.setBounds(200, 100, 400, 300);
+        panel.setBounds(200, 100, 400, 250);
         panel.setBackground(Color.BLACK);
 
         JLabel lblGuanranteedAmount = new JLabel("Guaranteed Amount:");
@@ -108,10 +116,7 @@ public class LoanApplicationForm extends JFrame {
         JLabel amountLabel = new JLabel("Amount :");
         amountLabel.setForeground(Color.WHITE);
 
-        btnDelete = new JButton("Delete User");
-        btnDelete.setBounds(500, 650, 150, 30);
-        btnDelete.setBackground(Color.RED);
-        btnDelete.setForeground(Color.WHITE);
+
 
         panel.add(amountLabel);
         panel.add(txtAmount);
@@ -123,9 +128,15 @@ public class LoanApplicationForm extends JFrame {
 
         btnApply.setBounds(300, 650, 150, 30);
         backBtn.setBounds(20,20,80 ,30);
+
         add(backBtn);
         add(panel);
-        add(btnDelete);
+        if(isLoans) {
+            loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()));
+            loanDisplay.setBounds(100, 400, 600, 220);  // Set bounds for layout consistency
+            add(loanDisplay);
+        }
+        add(btnLogout);
         add(btnApply);
 
 
@@ -140,22 +151,32 @@ public class LoanApplicationForm extends JFrame {
             }
         });
 
-        // Action listener for Delete button
-        btnDelete.addActionListener(new ActionListener() {
+        // Action listener for Delete button (Log out)
+        btnLogout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                    // Prompt for confirmation before proceeding
+                    int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to log out?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
-                        MemberController.deleteAllMembers();
-                        JOptionPane.showMessageDialog(null, "User deleted successfully!");
-                        clearFields();
+                        // Call the method to log out (delete) the member from the database
+                        boolean success = MemberController.logoutMemberById(member.getId());
+
+                        if (success) {
+                            clearFields();
+                            dispose();
+                           new MemberRegistrationForm();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Failed to logout user. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 } catch (NumberFormatException ex) {
+                    // Handle invalid Member ID input
                     JOptionPane.showMessageDialog(null, "Please enter a valid Member ID", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
 
         // Add event listener for loan type combo box
         cmbLoanType.addActionListener(new ActionListener() {
@@ -216,13 +237,25 @@ public class LoanApplicationForm extends JFrame {
                     String loanType = (String) cmbLoanType.getSelectedItem();
                     double amount = Double.parseDouble(txtAmount.getText());
 
-                    Loan loan = new Loan( member.getId(), loanType, amount, interestRate, repaymentPeriod, selectedGuarantorId,guaranteedAmount);
-                     Loan appliedLoan = LoanController.applyForLoan(loan);
+                    Loan loan = new Loan(member.getId(), loanType, amount, interestRate, repaymentPeriod, selectedGuarantorId, guaranteedAmount);
+                    Loan appliedLoan = LoanController.applyForLoan(loan);
+
                     JOptionPane.showMessageDialog(null, "Loan application submitted successfully!");
                     clearFields();
+
+                    // Check if LoanDisplay already exists, otherwise create and add it
+                    if (loanDisplay != null) {
+                        remove(loanDisplay);
+                    }
+                    loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()));
+                    loanDisplay.setBounds(100, 400, 600, 220);
+                    add(loanDisplay);
+                    revalidate();
+                    repaint();
                 }
             }
         });
+
 
         setVisible(true);
     }
@@ -230,37 +263,29 @@ public class LoanApplicationForm extends JFrame {
 
     // Validation method for input fields
     private boolean validateFields() {
-
         if (txtGuarateedAmount.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Member ID cannot be empty", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Guaranteed Amount cannot be empty", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
         try {
-            Integer.parseInt(txtGuarateedAmount.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Member ID must be a valid number", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            Double.parseDouble(txtGuarateedAmount.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid amount format", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-
         if (txtAmount.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Amount cannot be empty", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            double amount = Double.parseDouble(txtAmount.getText());
-            if (amount <= 0) {
-                JOptionPane.showMessageDialog(null, "Amount must be greater than 0", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Amount must be a valid number", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            Double.parseDouble(txtAmount.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid amount format", "Validation Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
         return true;
     }
+
 
     private void clearFields() {
         txtGuarateedAmount.setText("");
@@ -269,3 +294,57 @@ public class LoanApplicationForm extends JFrame {
         txtAmount.setText("");
     }
 }
+
+
+
+
+class LoanDisplay extends JScrollPane {
+    private List<Loan> loans;
+
+    LoanDisplay(List<Loan> loans) {
+        this.loans = loans;
+
+        setBackground(Color.BLACK);
+        setForeground(Color.WHITE);
+        setBounds(100, 400, 800, 220);
+
+        // Panel to hold the loans in a 4-column layout
+        JPanel panel = new JPanel(new GridLayout(0, 4, 10, 5));
+        panel.setBackground(Color.BLACK);
+
+        for (Loan loan : loans) {
+            // Create labels for each loan property to display in columns
+            JLabel loanTypeLabel = new JLabel("Loan Type: " + loan.getLoanType());
+            JLabel amountLabel = new JLabel("Amount: " + loan.getAmount());
+            JLabel guarantorLabel = new JLabel("Guarantor: " + loan.getGuarantorName());
+
+            loanTypeLabel.setForeground(Color.WHITE);
+            amountLabel.setForeground(Color.WHITE);
+            guarantorLabel.setForeground(Color.WHITE);
+
+            // Create a 'View' button for each loan
+            JButton viewButton = new JButton("View");
+            viewButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Open a new frame to display loan details
+                    LoanDetailFrame detailFrame = new LoanDetailFrame(loan);
+                    detailFrame.setVisible(true);
+                }
+            });
+
+            // Add components to the panel in a single row (loan information + button)
+            panel.add(loanTypeLabel);
+            panel.add(amountLabel);
+            panel.add(guarantorLabel);
+            panel.add(viewButton);
+        }
+
+        // Set the preferred size to enforce a 30px row height per loan
+        panel.setPreferredSize(new Dimension(800, loans.size() * 30));
+        setViewportView(panel);
+    }
+}
+
+
+

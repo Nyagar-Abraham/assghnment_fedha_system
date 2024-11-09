@@ -7,8 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoanController {
+   // APPLY LOAN
     public static Loan applyForLoan(Loan loan) {
         System.out.println("apply loan called");
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -61,5 +64,52 @@ public class LoanController {
         }
 
         return null;  // Return null if something goes wrong
+    }
+
+
+    public static List<Loan> getUserLoansWithGuarantor(int memberId) {
+        List<Loan> loans = new ArrayList<>();
+
+        String sql = """
+            SELECT loans.loan_id, loans.member_id, loans.loan_type, loans.amount, 
+                   loans.interest_rate, loans.repayment_period, loans.monthly_repayment,
+                   guarantors.guarantor_member_id, guarantors.amount_guaranteed,
+                   members.first_name AS guarantor_name
+            FROM loans
+            LEFT JOIN guarantors ON loans.loan_id = guarantors.loan_id
+            LEFT JOIN members ON guarantors.guarantor_member_id = members.member_id
+            WHERE loans.member_id = ?
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, memberId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Loan loan = new Loan(
+                        rs.getInt("loan_id"),
+                        rs.getInt("member_id"),
+                        rs.getString("loan_type"),
+                        rs.getDouble("amount"),
+                        rs.getDouble("interest_rate"),
+                        rs.getInt("repayment_period"),
+                        rs.getDouble("monthly_repayment")
+                );
+
+                // Assuming Loan has methods to set guarantor details
+                loan.setGuarantorID(rs.getInt("guarantor_member_id"));
+                loan.setGuaranteedAmount(rs.getDouble("amount_guaranteed"));
+                loan.setGuarantorName(rs.getString("guarantor_name"));
+
+                loans.add(loan);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return loans;
     }
 }
