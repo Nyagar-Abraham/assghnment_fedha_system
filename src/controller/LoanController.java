@@ -112,4 +112,48 @@ public class LoanController {
 
         return loans;
     }
+
+
+    //DELETE LOAN
+    public static boolean deleteLoanById(int loanId) {
+        String loanSql = "DELETE FROM loans WHERE loan_id = ?";
+        String guarantorSql = "DELETE FROM guarantors WHERE loan_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Start transaction
+            conn.setAutoCommit(false);
+
+            // Delete guarantor record
+            try (PreparedStatement guarantorStmt = conn.prepareStatement(guarantorSql)) {
+                guarantorStmt.setInt(1, loanId);
+                int guarantorAffectedRows = guarantorStmt.executeUpdate();
+
+                if (guarantorAffectedRows > 0) {
+                    // Delete loan record
+                    try (PreparedStatement loanStmt = conn.prepareStatement(loanSql)) {
+                        loanStmt.setInt(1, loanId);
+                        int loanAffectedRows = loanStmt.executeUpdate();
+
+                        if (loanAffectedRows > 0) {
+                            // Commit transaction if both deletions are successful
+                            conn.commit();
+                            System.out.println("Loan and associated guarantor deleted successfully.");
+                            return true;
+                        } else {
+                            conn.rollback();
+                            System.out.println("Loan deletion failed, rolling back transaction.");
+                        }
+                    }
+                } else {
+                    conn.rollback();
+                    System.out.println("Guarantor deletion failed, rolling back transaction.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;  // Return false if the deletion fails
+    }
+
 }

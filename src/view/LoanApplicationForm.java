@@ -132,7 +132,7 @@ public class LoanApplicationForm extends JFrame {
         add(backBtn);
         add(panel);
         if(isLoans) {
-            loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()));
+            loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()),member);
             loanDisplay.setBounds(100, 400, 600, 220);  // Set bounds for layout consistency
             add(loanDisplay);
         }
@@ -247,7 +247,7 @@ public class LoanApplicationForm extends JFrame {
                     if (loanDisplay != null) {
                         remove(loanDisplay);
                     }
-                    loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()));
+                    loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()),member);
                     loanDisplay.setBounds(100, 400, 600, 220);
                     add(loanDisplay);
                     revalidate();
@@ -300,9 +300,11 @@ public class LoanApplicationForm extends JFrame {
 
 class LoanDisplay extends JScrollPane {
     private List<Loan> loans;
+    private Member member;
 
-    LoanDisplay(List<Loan> loans) {
+    LoanDisplay(List<Loan> loans,Member member) {
         this.loans = loans;
+        this.member = member;
 
         setBackground(Color.BLACK);
         setForeground(Color.WHITE);
@@ -327,8 +329,14 @@ class LoanDisplay extends JScrollPane {
             viewButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Open a new frame to display loan details
-                    LoanDetailFrame detailFrame = new LoanDetailFrame(loan);
+                    // Dispose of the LoanApplicationForm
+                    JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(viewButton);
+                    if (parentFrame != null) {
+                        parentFrame.dispose();  // Close the LoanApplicationForm
+                    }
+
+                    // Open the LoanDetailFrame
+                    LoanDetailFrame detailFrame = new LoanDetailFrame(loan, member);
                     detailFrame.setVisible(true);
                 }
             });

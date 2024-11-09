@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1fa5e8b3-6190-427e-9503-2f5d0f336365" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/view/LoanDetailFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/LoanController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/LoanController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/MemberController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Loan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Loan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/LoanApplicationForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/LoanApplicationForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/LoanDetailFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/LoanDetailFrame.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +47,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/abrahamnyagar/Downloads/mysql-connector-j.jar&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/abrahamnyagar/IdeaProjects/assghnment_fedha_system&quot;,
     &quot;onboarding.tips.debug.path&quot;: &quot;/home/nyagarabraham/IdeaProjects/Fedha_System/src/Main.java&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
