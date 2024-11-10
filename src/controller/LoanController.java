@@ -3,6 +3,7 @@ package controller;
 import model.DatabaseConnection;
 import model.Loan;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +15,7 @@ public class LoanController {
    // APPLY LOAN
     public static Loan applyForLoan(Loan loan) {
         System.out.println("apply loan called");
+        System.out.println(loan.getMonthlyRepayment());
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Start transaction
             conn.setAutoCommit(false);
@@ -65,6 +67,84 @@ public class LoanController {
 
         return null;  // Return null if something goes wrong
     }
+
+
+    public static Loan updateLoan(Loan loan) {
+        // Perform input validation
+        if (loan.getRepaymentPeriod() <= 0) {
+            JOptionPane.showMessageDialog(null, "Repayment Period must be greater than 0.");
+            return null;
+        }
+
+        if (loan.getGuaranteedAmount() < 0) {
+            JOptionPane.showMessageDialog(null, "Guaranteed Amount cannot be negative.");
+            return null;
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Start a transaction
+            conn.setAutoCommit(false);
+
+            // Update loan details in the loans table
+            String loanSql = "UPDATE loans SET repayment_period = ?, amount = ?, interest_rate = ? WHERE loan_id = ?";
+            PreparedStatement loanStmt = conn.prepareStatement(loanSql);
+            loanStmt.setInt(1, loan.getRepaymentPeriod());
+            loanStmt.setDouble(2, loan.getAmount());
+            loanStmt.setDouble(3, loan.getInterestRate());
+            loanStmt.setInt(4, loan.getId());
+
+            int loanRowsAffected = loanStmt.executeUpdate();
+
+            // Update guarantor information in the guarantors table
+            String guarantorSql = "UPDATE guarantors SET amount_guaranteed = ? WHERE loan_id = ? AND guarantor_member_id = ?";
+            PreparedStatement guarantorStmt = conn.prepareStatement(guarantorSql);
+            guarantorStmt.setDouble(1, loan.getGuaranteedAmount());
+            guarantorStmt.setInt(2, loan.getId());
+            guarantorStmt.setInt(3, loan.getGuarantorID());
+
+            int guarantorRowsAffected = guarantorStmt.executeUpdate();
+
+            if (loanRowsAffected > 0 && guarantorRowsAffected > 0) {
+                // Commit the transaction if both updates are successful
+                conn.commit();
+
+                // Retrieve the updated loan and guarantor details
+                String retrieveSql = "SELECT l.loan_id, l.member_id, l.loan_type, l.amount, l.interest_rate, l.repayment_period, "
+                        + "l.monthly_repayment, g.guarantor_member_id, g.amount_guaranteed "
+                        + "FROM loans l JOIN guarantors g ON l.loan_id = g.loan_id WHERE l.loan_id = ?";
+                PreparedStatement retrieveStmt = conn.prepareStatement(retrieveSql);
+                retrieveStmt.setInt(1, loan.getId());
+                ResultSet rs = retrieveStmt.executeQuery();
+
+                if (rs.next()) {
+                    // Update the loan object with the latest data from the database
+                    loan.setMemberId(rs.getInt("member_id"));
+                    loan.setLoanType(rs.getString("loan_type"));
+                    loan.setAmount(rs.getDouble("amount"));
+                    loan.setInterestRate(rs.getDouble("interest_rate"));
+                    loan.setRepaymentPeriod(rs.getInt("repayment_period"));
+                    loan.setMonthlyRepayment(rs.getDouble("monthly_repayment"));
+                    loan.setGuarantorID(rs.getInt("guarantor_member_id"));
+                    loan.setGuaranteedAmount(rs.getDouble("amount_guaranteed"));
+
+                    JOptionPane.showMessageDialog(null, "Loan and guarantor details updated successfully.");
+                    return loan;  // Return the updated loan object
+                }
+            } else {
+                // Rollback transaction if either update fails
+                conn.rollback();
+                JOptionPane.showMessageDialog(null, "Failed to update loan or guarantor details. Transaction rolled back.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error updating loan details.");
+        }
+
+        return null;  // Return null if the update fails
+    }
+
+
 
 
     public static List<Loan> getUserLoansWithGuarantor(int memberId) {

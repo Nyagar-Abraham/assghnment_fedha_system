@@ -14,8 +14,8 @@ class LoanDetailFrame extends JFrame {
     LoanDetailFrame(Loan loan, Member member) {
         this.member = member;
         setTitle("Loan Details");
-        setSize(500, 400);  // Adjust as needed
-        setLocationRelativeTo(null);
+        setSize(600, 500);
+//        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Panel for displaying loan details with GridBagLayout
@@ -31,29 +31,35 @@ class LoanDetailFrame extends JFrame {
         JButton btnBack = new JButton("Back");
         btnBack.setBackground(Color.GRAY);
         btnBack.setForeground(Color.WHITE);
-        btnBack.setPreferredSize(new Dimension(100, 30));  // Button size
+        btnBack.setPreferredSize(new Dimension(70, 30));  // Button size
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;  // Span across both columns
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+
+        gbc.gridwidth = 2;
         panel.add(btnBack, gbc);
 
-        // Add action listener to the Back button to go back to LoanApplicationForm
+
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Close current frame (LoanDetailFrame)
+
                 dispose();
-                // Open LoanApplicationForm (You can adjust the navigation code here)
-                new LoanApplicationForm(member);  // Assuming this is the form you want to navigate to
+
+                new LoanApplicationForm(member);
             }
         });
 
         row++;
 
-        // Loan Type Label and Field (Disabled for editing)
+
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Loan Type:"), gbc);
+        JLabel loanTypeLabel = new JLabel("Loan Type:  ");
+        loanTypeLabel.setForeground(Color.WHITE);
+        panel.add(loanTypeLabel, gbc);
+
 
         gbc.gridx = 1;
         JTextField txtLoanType = new JTextField(loan.getLoanType(), 20);  // Make text field larger
@@ -65,7 +71,10 @@ class LoanDetailFrame extends JFrame {
         // Amount Label and Field (Disabled for editing)
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Amount:"), gbc);
+        JLabel amountLabel = new JLabel("Amount:  ");
+        amountLabel .setForeground(Color.WHITE);
+        panel.add(amountLabel, gbc);
+
 
         gbc.gridx = 1;
         JTextField txtAmount = new JTextField(String.valueOf(loan.getAmount()), 20);  // Make text field larger
@@ -78,9 +87,11 @@ class LoanDetailFrame extends JFrame {
         JPanel guarantorPanel = new JPanel();
         guarantorPanel.setBackground(Color.BLACK);
         guarantorPanel.setLayout(new GridLayout(1, 2, 10, 0));  // Group labels closer with horizontal spacing
-        JLabel guarantorLabel = new JLabel("Guarantor:");
+        JLabel guarantorLabel = new JLabel("Guarantor:  ");
+        guarantorLabel.setForeground(Color.WHITE);
         JTextField txtGuarantor = new JTextField(loan.getGuarantorName(), 10);  // Make text field larger
         txtGuarantor.setBackground(Color.WHITE);
+        txtGuarantor.setEditable(false);
         guarantorPanel.add(guarantorLabel);
         guarantorPanel.add(txtGuarantor);
 
@@ -93,7 +104,9 @@ class LoanDetailFrame extends JFrame {
         // Loan Date Label and Field (Disabled for editing)
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Loan Date:"), gbc);
+        JLabel loanDateLabel = new JLabel("Loan Date:  ");
+        loanDateLabel.setForeground(Color.WHITE);
+        panel.add(loanDateLabel, gbc);
 
         gbc.gridx = 1;
         JTextField txtLoanDate = new JTextField(String.valueOf(loan.getRepaymentPeriod()), 20);  // Larger text field
@@ -105,42 +118,48 @@ class LoanDetailFrame extends JFrame {
         // Interest Rate Label and Field (Disabled for editing)
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Interest Rate:"), gbc);
+        JLabel interestLabel = new JLabel("Interest Rate:  ");
+        interestLabel.setForeground(Color.WHITE);
+        panel.add(interestLabel, gbc);
 
         gbc.gridx = 1;
         JTextField txtInterestRate = new JTextField(String.valueOf(loan.getInterestRate()), 20);
-        txtInterestRate.setEditable(false); // Disabled for editing
-        txtInterestRate.setBackground(Color.LIGHT_GRAY);  // Background color change
+        txtInterestRate.setEditable(false);
+        txtInterestRate.setBackground(Color.LIGHT_GRAY);
         panel.add(txtInterestRate, gbc);
         row++;
 
         // Loan Term Label and Field (Editable if necessary)
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Repayment Period:"), gbc);
+        JLabel repaymentLabel = new JLabel("Repayment Period:  ");
+        repaymentLabel.setForeground(Color.WHITE);
+        panel.add(repaymentLabel, gbc);
 
         gbc.gridx = 1;
-        JTextField txtLoanTerm = new JTextField(String.valueOf(loan.getRepaymentPeriod()), 20);
-        panel.add(txtLoanTerm, gbc);
+        JTextField txtRepaymentPeriod = new JTextField(String.valueOf(loan.getRepaymentPeriod()), 20);
+        panel.add( txtRepaymentPeriod, gbc);
         row++;
 
         // Status Label and Field (Disabled for editing)
         gbc.gridx = 0;
         gbc.gridy = row;
-        panel.add(new JLabel("Amount Guaranteed:"), gbc);
-
+        JLabel amountGuaranteedLabel = new JLabel("Amount Guaranteed:  ");
+        amountGuaranteedLabel.setForeground(Color.WHITE);
+        panel.add(amountGuaranteedLabel, gbc);
         gbc.gridx = 1;
-        JTextField txtLoanStatus = new JTextField(String.valueOf(loan.getGuaranteedAmount()), 20);
-        txtLoanStatus.setEditable(false); // Disabled for editing
-        txtLoanStatus.setBackground(Color.LIGHT_GRAY);  // Background color change
-        panel.add(txtLoanStatus, gbc);
+
+        JTextField txtAmountGuaranteed = new JTextField(String.valueOf(loan.getGuaranteedAmount()), 20);
+        txtAmountGuaranteed.setEditable(true);
+        txtAmountGuaranteed.setBackground(Color.LIGHT_GRAY);
+        panel.add(txtAmountGuaranteed, gbc);
         row++;
 
         // Delete Button with red background and larger size
         JButton btnDelete = new JButton("Delete");
         btnDelete.setBackground(Color.RED);
         btnDelete.setForeground(Color.WHITE);
-        btnDelete.setPreferredSize(new Dimension(150, 40));  // Larger button size
+        btnDelete.setPreferredSize(new Dimension(150, 40));
         gbc.gridx = 0;
         gbc.gridy = row;
         gbc.gridwidth = 1;
@@ -173,18 +192,50 @@ class LoanDetailFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "Loan deleted successfully!");
 
                     dispose();
-                    new MemberRegistrationForm();
+                    new LoanApplicationForm(member);
                 } else {
                     JOptionPane.showMessageDialog(null, "Failed to delete loan.");
                 }
             }
         });
 
+
+// Action Listener for Update Button
         btnUpdate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle loan update here (e.g., allow editing fields)
-                JOptionPane.showMessageDialog(null, "Loan updated successfully!");
+                // Get and validate the updated values
+                try {
+                    int updatedRepaymentPeriod = Integer.parseInt( txtRepaymentPeriod.getText().trim());
+                    double updatedGuaranteedAmount = Double.parseDouble(txtAmountGuaranteed.getText().trim());
+
+                    if (updatedRepaymentPeriod <= 0) {
+                        JOptionPane.showMessageDialog(null, "Repayment period must be positive.");
+                        return;
+                    }
+                    if (updatedGuaranteedAmount < 0) {
+                        JOptionPane.showMessageDialog(null, "Guaranteed amount cannot be negative.");
+                        return;
+                    }
+
+                    // Update the loan object with new values
+                    loan.setRepaymentPeriod(updatedRepaymentPeriod);
+                    loan.setGuaranteedAmount(updatedGuaranteedAmount);
+
+                    // Call the updateLoan method
+                    Loan updatedLoan = LoanController.updateLoan(loan);
+
+                    if (updatedLoan != null) {
+                        JOptionPane.showMessageDialog(null, "Loan updated successfully!");
+                        dispose();
+                        new LoanDetailFrame(updatedLoan,member);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to update loan.");
+                    }
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter numeric values for Repayment Period and Guaranteed Amount.");
+                }
             }
         });
 

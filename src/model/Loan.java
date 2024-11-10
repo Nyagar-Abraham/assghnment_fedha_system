@@ -117,4 +117,28 @@ public class Loan {
     public double getMonthlyRepayment() {
         return monthlyRepayment;
     }
+
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
+    }
+
+    public void setLoanType(String loanType) {
+        this.loanType = loanType;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public void setRepaymentPeriod(int repaymentPeriod) {
+        this.repaymentPeriod = repaymentPeriod;
+    }
+
+    public void setMonthlyRepayment(double monthlyRepayment) {
+        this.monthlyRepayment = monthlyRepayment;
+    }
 }

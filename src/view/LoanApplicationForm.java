@@ -133,7 +133,7 @@ public class LoanApplicationForm extends JFrame {
         add(panel);
         if(isLoans) {
             loanDisplay = new LoanDisplay(LoanController.getUserLoansWithGuarantor(member.getId()),member);
-            loanDisplay.setBounds(100, 400, 600, 220);  // Set bounds for layout consistency
+            loanDisplay.setBounds(50, 400, 700, 220);  // Set bounds for layout consistency
             add(loanDisplay);
         }
         add(btnLogout);
@@ -298,11 +298,13 @@ public class LoanApplicationForm extends JFrame {
 
 
 
+
+
 class LoanDisplay extends JScrollPane {
     private List<Loan> loans;
     private Member member;
 
-    LoanDisplay(List<Loan> loans,Member member) {
+    public LoanDisplay(List<Loan> loans, Member member) {
         this.loans = loans;
         this.member = member;
 
@@ -310,46 +312,66 @@ class LoanDisplay extends JScrollPane {
         setForeground(Color.WHITE);
         setBounds(100, 400, 800, 220);
 
-        // Panel to hold the loans in a 4-column layout
-        JPanel panel = new JPanel(new GridLayout(0, 4, 10, 5));
+        // Panel to hold the loans in a GridBagLayout
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.BLACK);
 
-        for (Loan loan : loans) {
-            // Create labels for each loan property to display in columns
-            JLabel loanTypeLabel = new JLabel("Loan Type: " + loan.getLoanType());
-            JLabel amountLabel = new JLabel("Amount: " + loan.getAmount());
-            JLabel guarantorLabel = new JLabel("Guarantor: " + loan.getGuarantorName());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10); // Padding around each component
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
+        int rowHeight = loans.size() == 1 ? 25 : 30;
+
+        for (int i = 0; i < loans.size(); i++) {
+            Loan loan = loans.get(i);
+
+            // Set up each row's components
+            JLabel loanTypeLabel = new JLabel("Loan Type:  " + loan.getLoanType());
+            JLabel amountLabel = new JLabel("Amount:  " + loan.getAmount());
+            JLabel guarantorLabel = new JLabel("Guarantor:  " + loan.getGuarantorName());
 
             loanTypeLabel.setForeground(Color.WHITE);
             amountLabel.setForeground(Color.WHITE);
             guarantorLabel.setForeground(Color.WHITE);
 
-            // Create a 'View' button for each loan
             JButton viewButton = new JButton("View");
+            viewButton.setBackground(Color.CYAN);
+            viewButton.setForeground(Color.WHITE);
             viewButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Dispose of the LoanApplicationForm
                     JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(viewButton);
                     if (parentFrame != null) {
-                        parentFrame.dispose();  // Close the LoanApplicationForm
+                        parentFrame.dispose();
                     }
 
-                    // Open the LoanDetailFrame
                     LoanDetailFrame detailFrame = new LoanDetailFrame(loan, member);
                     detailFrame.setVisible(true);
                 }
             });
 
-            // Add components to the panel in a single row (loan information + button)
-            panel.add(loanTypeLabel);
-            panel.add(amountLabel);
-            panel.add(guarantorLabel);
-            panel.add(viewButton);
+            // Add each component with its constraints
+            gbc.gridy = i;
+            gbc.gridx = 0;
+            gbc.weightx = 0.25;
+            panel.add(loanTypeLabel, gbc);
+
+            gbc.gridx = 1;
+            gbc.weightx = 0.25;
+            panel.add(amountLabel, gbc);
+
+            gbc.gridx = 2;
+            gbc.weightx = 0.25;
+            panel.add(guarantorLabel, gbc);
+
+            gbc.gridx = 3;
+            gbc.weightx = 0.25;
+            panel.add(viewButton, gbc);
         }
 
-        // Set the preferred size to enforce a 30px row height per loan
-        panel.setPreferredSize(new Dimension(800, loans.size() * 30));
+        // Set panel preferred size based on loan count
+        panel.setPreferredSize(new Dimension(800, loans.size() * rowHeight));
         setViewportView(panel);
     }
 }
